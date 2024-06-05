@@ -4,8 +4,8 @@ import { body } from "express-validator";
 
 import isAuth from "../middlewares/auth.js";
 import {
-  getUserProfile,
   mainHeaderData,
+  getUserProfile,
   findFriends,
   sendfriendRequest,
   sentfriendRequests,
@@ -34,39 +34,9 @@ const upload = multer({
 
 const router = express.Router();
 
-router.get("/profile", isAuth, getUserProfile);
-
 router.get("/header-data", isAuth, mainHeaderData);
 
-router.get("/find-friends/:searchedName", isAuth, findFriends);
-
-router.get("/sent-friendrequests", isAuth, sentfriendRequests);
-
-router.get("/pending-friendrequests", isAuth, pendingfriendRequests);
-
-router.get("/friend-profile/:friendId", isAuth, getuserfriend);
-
-router.get("/friends", isAuth, getuserfriends);
-
-router.get("/blocked-users", isAuth, getBlockedUsers);
-
-router.post(
-  "/send-friendrequest/:receiverId",
-  isAuth,
-  sendfriendRequest,
-  createNotificationAndSend
-);
-
-router.delete("/cancel-friendrequest/:receiverId", isAuth, cancelfriendRequest);
-
-router.delete("/reject-friendrequest/:receiverId", isAuth, rejectfriendRequest);
-
-router.post(
-  "/accept-friendrequest/:receiverId",
-  isAuth,
-  acceptfriendRequest,
-  createNotificationAndSend
-);
+router.get("/profile", isAuth, getUserProfile);
 
 router.post(
   "/update-profilePicture",
@@ -89,6 +59,36 @@ router.put(
   ],
   updateProfile
 );
+
+router.get("/find-friends/:searchedName", isAuth, findFriends);
+
+router.post(
+  "/send-friendrequest/:receiverId",
+  isAuth,
+  sendfriendRequest,
+  createNotificationAndSend
+);
+
+router.get("/sent-friendrequests", isAuth, sentfriendRequests);
+
+router.delete("/cancel-friendrequest/:receiverId", isAuth, cancelfriendRequest);
+
+router.get("/pending-friendrequests", isAuth, pendingfriendRequests);
+
+router.post(
+  "/accept-friendrequest/:receiverId",
+  isAuth,
+  acceptfriendRequest,
+  createNotificationAndSend
+);
+
+router.delete("/reject-friendrequest/:receiverId", isAuth, rejectfriendRequest);
+
+router.get("/friend-profile/:friendId", isAuth, getuserfriend);
+
+router.get("/friends", isAuth, getuserfriends);
+
+router.get("/blocked-users", isAuth, getBlockedUsers);
 
 router.put("/block-user/:friendId", isAuth, blockUser);
 

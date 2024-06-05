@@ -15,10 +15,10 @@ export default function useLogin(baseURL) {
   const mutateLogin = useCallback(
     async (userData) => {
       if (!userData.email.includes("@") || !userData.email.includes(".com")) {
-        throw new Error("Please enter a valid email");
+        throw new Error("Enter valid email.");
       }
       if (userData.password.trim().length < 6) {
-        throw new Error("Password must be min:6 characters in length");
+        throw new Error("Password must be min:6 characters in length.");
       }
       return await axios.post(baseURL, userData);
     },

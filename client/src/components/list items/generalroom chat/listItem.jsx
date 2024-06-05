@@ -16,7 +16,7 @@ const ListItem = ({ messages }) => {
     return () => {
       clearTimeout(timeoutId);
     };
-  }, []);
+  }, [messages]);
 
   return (
     <>
@@ -30,7 +30,7 @@ const ListItem = ({ messages }) => {
             {message.senderId !== userId && (
               <img
                 src={message.senderProfilePicture}
-                alt={message.senderProfilePicuter}
+                alt={message.senderProfilePicture}
                 className="w-10 h-10 border-2 rounded-full object-fit border-primarylight sm:h-12 sm:w-12"
               />
             )}

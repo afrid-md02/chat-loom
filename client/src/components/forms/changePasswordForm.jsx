@@ -32,7 +32,7 @@ const ChangePasswordForm = () => {
   }
 
   return (
-    <form className="formStyles" onSubmit={handleChangePassword}>
+    <form className="formStyles" onSubmit={handleChangePassword} noValidate>
       <FormsText>Enter your old password to change</FormsText>
       <PasswordInput
         content="Old password"

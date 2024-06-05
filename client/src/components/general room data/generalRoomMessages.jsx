@@ -3,12 +3,15 @@ import {
   calculateToday,
   calculateYesterday,
 } from "../../utilities/calculator";
+import useListenGeneralRoomMsgs from "../../hooks/useListenGeneralRoomMsgs";
 
 import List from "../lists/messages/list";
 import ListItem from "../list items/generalroom chat/listItem";
 import ScrollToBottomButton from "../buttons/scrollToBottomBtn";
 
-const GeneralRoomMessages = ({ messages: data }) => {
+const GeneralRoomMessages = ({ generalRoomMessages: data }) => {
+  useListenGeneralRoomMsgs();
+
   return (
     <>
       <div className="min-h-[calc(100dvh-9.188rem)] space-y-8 pb-28 pt-8 sm:min-h-[calc(100dvh-9.938rem)] sm:space-y-12 sm:pb-32">

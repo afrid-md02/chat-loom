@@ -7,7 +7,7 @@ export default function useForgotPassword(baseURL) {
   const mutateForgotPassword = useCallback(
     async (userData) => {
       if (!userData.email.includes("@") || !userData.email.includes(".com")) {
-        throw new Error("Please enter a valid email");
+        throw new Error("Enter valid email.");
       }
       return await axios.post(baseURL, userData);
     },

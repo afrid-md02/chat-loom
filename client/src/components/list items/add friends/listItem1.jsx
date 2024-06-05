@@ -3,7 +3,7 @@ import { ChevronRight } from "@mui/icons-material";
 
 const ListItem1 = ({ value }) => {
   return (
-    <li className="font-medium tracking-wide font-Raleway hover:bg-background">
+    <li className="text-xs font-medium tracking-wide font-Raleway hover:bg-background sm:text-sm">
       <Link
         to={value.link}
         className="flex justify-between w-full px-1 py-2 text-copy"

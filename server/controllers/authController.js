@@ -17,9 +17,6 @@ const transporter = nodemailer.createTransport({
 
 export const signup = async (req, res, next) => {
   try {
-    // const imageUrl = req.file?.path;
-    const { userName, email, gender, password } = req.body;
-
     //validation errors using express-validator
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -28,8 +25,17 @@ export const signup = async (req, res, next) => {
       throw error;
     }
 
+    // extract data and remove spaces from ends of string to avoid collisions
+    const { userName, email, gender, password } = req.body;
+    const trimmedData = {
+      userName: userName.trim(),
+      email: email.trim(),
+      gender: gender.trim(),
+      password: password.trim(),
+    };
+
     //check the user name and email in database
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: trimmedData.email });
     if (user) {
       const error = new Error("Email already exist, signin");
       error.statusCode = 403;
@@ -38,17 +44,17 @@ export const signup = async (req, res, next) => {
 
     //hash password
     const salt = await bcryptjs.genSalt(10);
-    const hashedPassword = await bcryptjs.hash(password, salt);
+    const hashedPassword = await bcryptjs.hash(trimmedData.password, salt);
 
     //set profile
     let profilePicture;
-    if (gender === "male") {
-      profilePicture = `https://avatar.iran.liara.run/public/boy?username=${userName.replace(
+    if (trimmedData.gender === "male") {
+      profilePicture = `https://avatar.iran.liara.run/public/boy?username=${trimmedData.userName.replace(
         /\s/g,
         ""
       )}`;
     } else {
-      profilePicture = `https://avatar.iran.liara.run/public/girl?username=${userName.replace(
+      profilePicture = `https://avatar.iran.liara.run/public/girl?username=${trimmedData.userName.replace(
         /\s/g,
         ""
       )}`;
@@ -56,10 +62,10 @@ export const signup = async (req, res, next) => {
 
     //create new user in database
     const newUser = await User.create({
-      userName,
-      email,
+      userName: trimmedData.userName,
+      email: trimmedData.email,
       password: hashedPassword,
-      gender,
+      gender: trimmedData.gender,
       profilePicture,
     });
 
@@ -85,7 +91,7 @@ export const signup = async (req, res, next) => {
     if (
       err.message.includes("duplicate key error collection: chat-loom.users")
     ) {
-      const error = new Error("Username already in use, choose different one");
+      const error = new Error("Username already in use, choose different one.");
       error.statusCode = 403;
       return next(error);
     }
@@ -95,8 +101,6 @@ export const signup = async (req, res, next) => {
 
 export const login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
-
     //validation errors using express-validator
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -105,8 +109,14 @@ export const login = async (req, res, next) => {
       throw error;
     }
 
+    const { email, password } = req.body;
+    const trimmedData = {
+      email: email.trim(),
+      password: password.trim(),
+    };
+
     //find user in db
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: trimmedData.email });
     if (!user) {
       const error = new Error("User not registered");
       error.statusCode = 401;
@@ -114,7 +124,7 @@ export const login = async (req, res, next) => {
     }
 
     //compare password
-    const check = await bcryptjs.compare(password, user.password);
+    const check = await bcryptjs.compare(trimmedData.password, user.password);
     if (!check) {
       const error = new Error("Incorrect password");
       error.statusCode = 401;
@@ -133,8 +143,6 @@ export const login = async (req, res, next) => {
 
 export const forgotPassword = async (req, res, next) => {
   try {
-    const { email } = req.body;
-
     //validation errors using express-validator
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -143,8 +151,13 @@ export const forgotPassword = async (req, res, next) => {
       throw error;
     }
 
+    const { email } = req.body;
+    const trimmedData = {
+      email: email.trim(),
+    };
+
     //check the user in db
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: trimmedData.email });
     if (!user) {
       const error = new Error("User not registered");
       error.statusCode = 401;
@@ -163,7 +176,7 @@ export const forgotPassword = async (req, res, next) => {
     const result = await transporter.sendMail({
       from: '"ChatLoom Admin" <admin001@chatloom.com>',
       to: user.email,
-      subject: "Password reset",
+      subject: "Password reset link",
       html: `<h4>Hi ${user.userName},</h4>
               <p>Click this <a href=${link}>link</a> to reset your password.</p>
               <p>Note: The link will expire in 15 minutes and one time use only.</p>`,
@@ -190,9 +203,7 @@ export const forgotPassword = async (req, res, next) => {
 
 export const resetPassword = async (req, res, next) => {
   try {
-    const { userId } = req;
-    const { newPassword } = req.body;
-
+    //validation errors using express-validator
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       const error = new Error(errors.array()[0].msg);
@@ -200,14 +211,35 @@ export const resetPassword = async (req, res, next) => {
       throw error;
     }
 
+    const { userId } = req;
+    const { newPassword } = req.body;
+    const trimmedData = {
+      newPassword: newPassword.trim(),
+    };
+
     const salt = await bcryptjs.genSalt(10);
-    const hashedPassword = await bcryptjs.hash(newPassword, salt);
+    const hashedPassword = await bcryptjs.hash(trimmedData.newPassword, salt);
 
     const user = await User.findById(userId);
 
     user.password = hashedPassword;
     await user.save();
 
+    //send email and response
+    transporter.sendMail(
+      {
+        from: '"ChatLoom Admin" <admin001@chatloom.com>',
+        to: user.email,
+        subject: "Password changed",
+        html: `<h4>Hi ${user.userName},</h4>
+                  <p>Your password has been reset successfully.</p>`,
+      },
+      (error, response) => {
+        if (error) {
+          console.log(error.message);
+        }
+      }
+    );
     await res
       .status(201)
       .json({ user, message: "The password has been reset successfully" });

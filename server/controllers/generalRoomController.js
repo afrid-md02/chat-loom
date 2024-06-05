@@ -1,5 +1,7 @@
 import GeneralRoomMessage from "../models/generalRoomMessage.js";
 import GeneralRoomMedia from "../models/generalRoomMedia.js";
+import User from "../models/user.js";
+import { io, userSocketMap } from "../app.js";
 
 export const sendMesssage = async (req, res, next) => {
   try {
@@ -42,9 +44,31 @@ export const sendMesssage = async (req, res, next) => {
       });
     }
 
+    const messageWithMedia = await newMessage.populate("media");
+
+    const mediaArray = messageWithMedia.media ? [messageWithMedia.media] : [];
+
+    const user = await User.findById(userId);
+    const finalMessage = {
+      senderId: messageWithMedia.senderId,
+      text: messageWithMedia.text,
+      media: mediaArray,
+      createdAt: messageWithMedia.createdAt,
+      senderName: user.userName,
+      senderProfilePicture: user.profilePicture,
+      updatedAt: messageWithMedia.updatedAt,
+      _id: messageWithMedia._id,
+    };
+
+    // Emit the message to only online users
+    const onlineUsers = Object.values(userSocketMap);
+    onlineUsers.forEach((socketId) => {
+      io.to(socketId).emit("newGeneralRoomMessage", finalMessage);
+    });
+
     await res
       .status(201)
-      .json({ message: "Message sent successfully", newMessage });
+      .json({ message: "Message sent successfully", finalMessage });
   } catch (err) {
     next(err);
   }

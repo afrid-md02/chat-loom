@@ -53,12 +53,14 @@ export const mainHeaderData = async (req, res, next) => {
 
 export const findFriends = async (req, res, next) => {
   try {
-    const userId = req.userId;
+    const { userId } = req;
     const { searchedName } = req.params;
+
     const allUsers = await User.find({
       _id: { $ne: userId },
       friends: { $ne: userId },
     });
+
     const usersSearchedName = allUsers.filter((user) =>
       user.userName.includes(searchedName)
     );
@@ -67,8 +69,15 @@ export const findFriends = async (req, res, next) => {
       error.statusCode = 404;
       throw error;
     }
+
+    const filteredUsers = usersSearchedName.map((user) => ({
+      _id: user._id,
+      userName: user.userName,
+      profilePicture: user.profilePicture,
+    }));
+
     await res.status(200).json({
-      users: usersSearchedName,
+      users: filteredUsers,
       message: "Here are the matched names",
     });
   } catch (err) {
@@ -82,13 +91,16 @@ export const sendfriendRequest = async (req, res, next) => {
     const { receiverId } = req.params;
 
     const user = await User.findById(userId);
-    const receiver = await User.findById(receiverId);
 
     if (user.sentRequests.includes(receiverId)) {
-      const error = new Error("You already sent a friend request to this user");
+      const error = new Error(
+        "You already sent a friend request to this user."
+      );
       error.statusCode = 400;
       throw error;
     }
+
+    const receiver = await User.findById(receiverId);
 
     user.sentRequests.push(receiverId);
     receiver.pendingRequests.push(userId);
@@ -105,7 +117,11 @@ export const sentfriendRequests = async (req, res, next) => {
   try {
     const { userId } = req;
     const user = await User.findById(userId).populate("sentRequests");
-    const sentRequests = user.sentRequests;
+    const sentRequests = user.sentRequests.map((user) => ({
+      _id: user._id,
+      userName: user.userName,
+      profilePicture: user.profilePicture,
+    }));
     await res.status(200).json(sentRequests);
   } catch (err) {
     next(err);
@@ -127,6 +143,7 @@ export const cancelfriendRequest = async (req, res, next) => {
   try {
     const { userId } = req;
     const { receiverId } = req.params;
+
     const user = await User.findById(userId);
     const receiver = await User.findById(receiverId);
 
@@ -139,6 +156,7 @@ export const cancelfriendRequest = async (req, res, next) => {
 
     await user.save();
     await receiver.save();
+
     await res
       .status(202)
       .json({ message: "Friend request cancelled successfully" });
@@ -414,6 +432,7 @@ export const removeFriend = async (req, res, next) => {
     const mediaIds = conversation.messages
       .map((message) => message.media)
       .filter((mediaId) => mediaId);
+
 
     if (mediaIds.length !== 0) {
       const allMedias = await Media.find({ _id: { $in: mediaIds } });

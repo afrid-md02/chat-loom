@@ -21,7 +21,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_URL,
+    origin: "*",
   },
 });
 
@@ -33,7 +33,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
@@ -82,4 +82,4 @@ server.listen(PORT, async () => {
   console.log(`Server running on port ${PORT}`);
 });
 
-export { io, getReceiverSocketid };
+export { io, getReceiverSocketid, userSocketMap };

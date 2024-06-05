@@ -18,7 +18,7 @@ const validateLink = async (req, res, next) => {
       `ForgotPassword-Secret+${user.password}`
     );
     if (!decoded) {
-      const error = new Error("Link expired go back and generate new link");
+      const error = new Error("Link expired go back and generate the new link");
       error.statusCode = 401;
       throw error;
     }

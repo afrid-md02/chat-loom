@@ -10,10 +10,10 @@ export default function useResetPassword(baseURL) {
   const mutateResetPassword = useCallback(
     async ({ userData, resetToken }) => {
       if (userData.newPassword.trim().length < 6) {
-        throw new Error("New password must be min:6 characters in length");
+        throw new Error("New password must be min:6 characters in length.");
       }
       if (userData.newPassword.trim() !== userData.confirmNewPassword.trim()) {
-        throw new Error("New password must match");
+        throw new Error("New passwords must match.");
       }
       return await axios.post(baseURL, userData, {
         headers: {

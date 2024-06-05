@@ -2,18 +2,21 @@ import { AttachFile, RotateRight, Send } from "@mui/icons-material";
 import { useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
 
-import useSendMessage from "../../hooks/useSendMessage";
+import useGeneralRoomSendMessage from "../../hooks/useGeneralRoomSendMessage";
 import serverURL from "../../utilities/server_url";
 
 const GeneralRoomForm = ({ setFilePreview, fileInputRef }) => {
   const messageInputRef = useRef(null);
 
-  const { mutateSendMessage, onSuccessSendMessage, onErrorSendMessage } =
-    useSendMessage(`${serverURL}/generalroom/send-message`);
+  const {
+    mutateGeneralRoomSendMessage,
+    onSuccessGeneralRoomSendMessage,
+    onErrorGeneralRoomSendMessage,
+  } = useGeneralRoomSendMessage(`${serverURL}/generalroom/send-message`);
   const { mutate, isPending } = useMutation({
-    mutationFn: mutateSendMessage,
-    onSuccess: onSuccessSendMessage,
-    onError: onErrorSendMessage,
+    mutationFn: mutateGeneralRoomSendMessage,
+    onSuccess: onSuccessGeneralRoomSendMessage,
+    onError: onErrorGeneralRoomSendMessage,
   });
 
   function handleFileChange(event) {
@@ -64,7 +67,7 @@ const GeneralRoomForm = ({ setFilePreview, fileInputRef }) => {
       <button
         disabled={isPending ? true : false}
         type="submit"
-        className="flex items-center p-1 rounded bg-primary sm:space-x-2.5 sm:px-3 sm:py-1.5"
+        className="flex items-center rounded bg-primary p-1 sm:space-x-2.5 sm:px-3 sm:py-1.5"
       >
         {isPending ? (
           <RotateRight

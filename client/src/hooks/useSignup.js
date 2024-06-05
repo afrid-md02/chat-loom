@@ -10,23 +10,23 @@ export default function useSignup(baseURL) {
   const mutateSignup = useCallback(
     async (userData) => {
       if (userData.userName.trim().length < 4) {
-        throw new Error("Username must be min:4 characters in length");
+        throw new Error("Username must be min:4 characters in length.");
       }
       if (!userData.email.includes("@") || !userData.email.includes(".com")) {
-        throw new Error("Please enter a valid email");
+        throw new Error("Enter valid email.");
       }
       if (
         userData.gender === undefined ||
         userData.gender === null ||
-        userData.gender === ""
+        userData.gender.trim() === ""
       ) {
-        throw new Error("Please select gender");
+        throw new Error("Please select gender.");
       }
       if (userData.password.trim().length < 6) {
-        throw new Error("Password must be min:6 characters in length");
+        throw new Error("Password must be min:6 characters in length.");
       }
       if (userData.password.trim() !== userData.confirmPassword.trim()) {
-        throw new Error("Passwords must match");
+        throw new Error("Passwords must match.");
       }
       return await axios.post(baseURL, userData);
     },

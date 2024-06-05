@@ -17,19 +17,19 @@ const router = express.Router();
 router.post(
   "/signup",
   [
-    body("userName", "Username must be min:4 characters in length")
+    body("userName", "Username must be min:4 characters in length.")
       .trim()
       .isLength({ min: 4 }),
-    body("email", "Enter valid email").trim().isEmail(),
-    body("gender", "Gender must not be empty").not().isEmpty(),
-    body("password", "Password must be min:6 characters in length")
+    body("email", "Enter valid email.").trim().isEmail(),
+    body("gender", "Gender must not be empty.").not().isEmpty(),
+    body("password", "Password must be min:6 characters in length.")
       .trim()
       .isLength({ min: 6 }),
     body("confirmPassword")
       .trim()
       .custom((value, { req }) => {
         if (value !== req.body.password) {
-          throw new Error("Passwords must match");
+          throw new Error("Passwords must match.");
         }
         return true;
       }),
@@ -40,8 +40,8 @@ router.post(
 router.post(
   "/login",
   [
-    body("email", "Enter valid email").trim().isEmail(),
-    body("password", "Password must be min:6 characters in length")
+    body("email", "Enter valid email.").trim().isEmail(),
+    body("password", "Password must be min:6 characters in length.")
       .trim()
       .isLength({ min: 6 }),
   ],
@@ -50,7 +50,7 @@ router.post(
 
 router.post(
   "/forgot-password",
-  body("email", "Enter valid email").trim().isEmail(),
+  body("email", "Enter valid email.").trim().isEmail(),
   forgotPassword
 );
 
@@ -58,14 +58,14 @@ router.post(
   "/reset-password/:userId",
   validateLink,
   [
-    body("newPassword", "New Password must be min:6 characters")
+    body("newPassword", "New Password must be min:6 characters in length.")
       .trim()
       .isLength({ min: 6 }),
     body("confirmNewPassword")
       .trim()
       .custom((value, { req }) => {
         if (value !== req.body.newPassword) {
-          throw new Error("New passwords must match");
+          throw new Error("New passwords must match.");
         }
         return true;
       }),

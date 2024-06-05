@@ -21,12 +21,12 @@ export const createNotificationAndSend = async (req, res, next) => {
     let message;
     if (notificationType === "friendRequest") {
       const user = await User.findById(userId);
-      content = `${user.userName} sent you a friend request`;
-      message = "Friend request sent successfully";
+      content = `${user.userName} sent you a friend request.`;
+      message = "Friend request sent successfully.";
     } else if (notificationType === "friendRequestAccepted") {
       const user = await User.findById(userId);
-      content = `${user.userName} accepted your friend request`;
-      message = "Friend request accepted successfully";
+      content = `${user.userName} accepted your friend request.`;
+      message = "Friend request accepted successfully.";
     }
 
     const newNotification = await Notification.create({
