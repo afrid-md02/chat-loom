@@ -55,7 +55,7 @@ Dark mode
 #### UI Features
 - Online indicator: See friends who are online.
 - Tailwind CSS: Responsive and rich UI developed by tailwind CSS and added smooth animations after loading content.
-- Dark mode: Use the platform without causing eye stress turning ON the dark mode with one click.
+- Dark mode: Use the platform without causing eye stress turning **ON** the dark mode with one click.
 - Content Loading: Enjoy smooth loading animations that provide visual feedback during data retrieval or processing.
 - Toast alerts: Receive toast alerts for various actions, providing users with immediate feedback on their interactions.
 
