@@ -11,7 +11,6 @@ import messageRoutes from "./routes/messageRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import generalRoomRoutes from "./routes/generalRoomRoutes.js";
 import connectToMongoDB from "./mongoDB/connectToMongodb.js";
-import User from "./models/user.js";
 
 // Initialize dotenv
 dotenv.config();
