@@ -62,7 +62,7 @@ Dark mode
 
 ## Author
 
-- [@Afrid-Md](https://github.com/afrid-md02/chat-loom)
+- [@Afrid-Md](https://github.com/afrid-md02)
 
 
 ## Feedback
