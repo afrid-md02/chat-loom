@@ -20,7 +20,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: `${process.env.CLIENT_URL}`,
   },
 });
 
@@ -32,7 +32,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(
   cors({
-    origin: "*",
+    origin: `${process.env.CLIENT_URL}`,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
@@ -53,14 +53,13 @@ app.use((err, req, res, next) => {
   res.status(statusCode).json({ error: errorMessage });
 });
 
-// Socket.IO connection
-
 const getReceiverSocketid = (recieverId) => {
   return userSocketMap[recieverId];
 };
 
 const userSocketMap = {};
 
+// Socket.IO connection
 io.on("connection", (socket) => {
   console.log("A user connected", socket.id);
 
